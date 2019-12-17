@@ -16,12 +16,12 @@
 #### 已知BUG
 
 - 多拨环境下无法获取 wan ip，详情查看https://github.com/tty228/luci-app-serverchan/issues/8
-- 可能因为编译环境不同或者别的原因，makefile 提升权限失败，造成无法启动，对makefile没研究过，不太了解
-如遇到此问题请查阅 @zxlhhyccc 的解决方案
-https://github.com/tty228/luci-app-serverchan/issues/1
 - 设备温度文件基于斐讯K3，其他设备如遇到设备温度无法正常读取，请自行修改
-“cut -c1-2 /sys/class/thermal/thermal_zone0/temp” @KFERMercer 
-- 潘多拉等系统，请将脚本开头sh改成bash
+`cut -c1-2 /sys/class/thermal/thermal_zone0/temp` @KFERMercer 
+- 反复测试了一下，因权限问题不能启动的 bug 已经不存在了，但无法启动的 bug 依然存在
+-（目前已知在我电脑上的 Ubuntu 中修改保存代码，编译完成后会导致无法启动，使用 `sh -n /usr/bin/serverchan/serverchan` 命令检查，会显示代码出错，大概可能是换行符或者编码的原因，在 WinSCP 中重新复制保存就正常启动了，我尽量只在网页上修改吧）
+- 目测不少设备无法读取到设备名，会反复显示未知设备，请遇到此问题的各位同学更新一下脚本，因为我记得我某个老旧版本存在这个问题，我不确定是新问题还是老问题，脚本依赖 `cat /var/dhcp.leases` 命令读取设备名，如果 dhcp 中不存在设备名，那我也没办法，如果存在但没获取到，请提交 bug（实在强迫症你可以手动添加设备别名）
+- ipaddress 输出的文本有时会有乱码，导致出错，尚不能判定是设备编码环境导致，还是脚本编码导致，先暂时替换部分中文字符
 
 #### ps
 
