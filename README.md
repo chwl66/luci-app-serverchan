@@ -1,33 +1,44 @@
-# 说明
-- 用于 OpenWRT/LEDE 路由器上进行 Server酱 微信推送的插件
+# 简介
+- 用于 OpenWRT/LEDE 路由器上进行 Server酱 微信/Telegram 推送的插件
 - 基于 serverchan 提供的接口发送信息，Server酱说明：http://sc.ftqq.com/1.version
-- 已经自带 luci
-- 脚本基于斐讯 k3 制作，不同系统不同设备，请自行修改部分代码
+- **基于斐讯 k3 制作，不同系统不同设备，请自行修改部分代码，无测试条件无法重现的 bug 不考虑修复**
+- 依赖 iputils-arping + curl 命令，安装前请 `opkg update`，小内存路由谨慎安装
+- 使用主动探测设备连接的方式检测设备在线状态，以避免WiFi休眠机制，主动探测较为耗时，**如遇设备休眠频繁，请自行调整超时设置**
+- 流量统计功能依赖 wrtbwmon ，自行选装或编译，该插件与 Routing/NAT 、Flow Offloading 冲突，开启无法获取流量，自行选择
 
 #### 主要功能
-- 路由 ip 变动推送
+- 路由 ip/ipv6 变动推送
 - 设备别名
-- 设备上下线推送
+- 设备上线推送
+- 设备离线推送及流量使用情况
 - CPU 负载、温度监视
 - 定时推送设备运行状态
-- MAC 白名单、黑名单、仅检测某接口设备
-- 免打扰时间
+- MAC 白名单、黑名单、按接口检测设备
+- 免打扰
+- 无人值守任务
 
-#### 已知BUG
+#### 已知问题
+- 直接关闭接口时，该接口的离线设备会忽略检测
+- 部分设备无法读取到设备名，脚本使用 `cat /var/dhcp.leases` 命令读取设备名，如果 dhcp 中不存在设备名，则无法读取设备名（如二级路由设备、静态ip设备），请使用设备名备注.
+- tg 推送机器人已停运，请自建服务器，或哪个大佬无聊可以弄一下 pushplus
+- 基于斐讯 k3 制作，不同系统不同设备，可能会遇到各种问题
+- 潘多拉系统、或不支持 sh 的系统，请将脚本开头 `#!/bin/sh` 改为 `#!/bin/bash`，或手动安装 `sh`
 
-- 多拨环境下无法获取 wan ip，详情查看https://github.com/tty228/luci-app-serverchan/issues/8
-- 设备温度文件基于斐讯K3，其他设备如遇到设备温度无法正常读取，请自行修改
-`cut -c1-2 /sys/class/thermal/thermal_zone0/temp` @KFERMercer 
-- 反复测试了一下，因权限问题不能启动的 bug 已经不存在了，但无法启动的 bug 依然存在
--（目前已知在我电脑上的 Ubuntu 中修改保存代码，编译完成后会导致无法启动，使用 `sh -n /usr/bin/serverchan/serverchan` 命令检查，会显示代码出错，大概可能是换行符或者编码的原因，在 WinSCP 中重新复制保存就正常启动了，我尽量只在网页上修改吧）
-- 目测不少设备无法读取到设备名，会反复显示未知设备，请遇到此问题的各位同学更新一下脚本，因为我记得我某个老旧版本存在这个问题，我不确定是新问题还是老问题，脚本依赖 `cat /var/dhcp.leases` 命令读取设备名，如果 dhcp 中不存在设备名，那我也没办法，如果存在但没获取到，请提交 bug（实在强迫症你可以手动添加设备别名）
-- ipaddress 输出的文本有时会有乱码，导致出错，尚不能判定是设备编码环境导致，还是脚本编码导致，先暂时替换部分中文字符
+# Download
+- [luci-app-serverchan](https://github.com/tty228/luci-app-serverchan/releases)
+- [wrtbwmon](https://github.com/brvphoenix/wrtbwmon)
+- [luci-app-wrtbwmon](https://github.com/brvphoenix/luci-app-wrtbwmon) 
+- **L大版本直接编译 luci-app-wrtbwmon ，非原版 luci 如使用以上 wrtbwmon，请注意安装版本号**
 
 #### ps
-
-- 新功能不考虑添加
-- 好久没有折腾，飞机到期，编译环境不可用
-- 沉迷怀旧服
-- 别问了，再问就是我太懒
+- 新功能看情况开发，忙得头晕眼花
 - 欢迎各种代码提交
-- 提交bug时请带上日志跟设备
+- 提交bug时请尽量带上设备信息，日志与描述
+（如执行 `/usr/bin/serverchan/serverchan` 后的提示、日志信息、/tmp/serverchan/ipAddress 文件信息、或尝试使用 sh -x /usr/bin/serverchan/serverchan 查看详细运行信息 ）
+- 三言两句恕我无能为力
+
+# Donate
+如果你觉得此项目对你有帮助，请捐助我们，以使项目能持续发展，更加完善。
+
+![image](https://github.com/tty228/Python-100-Days/blob/master/res/WX.jpg)
+
